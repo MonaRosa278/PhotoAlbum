@@ -1,23 +1,9 @@
 version: 0.2
 
 phases:
-  install:
-    runtime-versions:
-      python: 3.8
-  pre_build:
-    commands:
-      - echo "Setting up AWS CLI..."
-      - aws --version
-  build:
-    commands:
-      - echo "Packaging Lambda functions..."
-      - aws cloudformation package --template-file template.yaml --s3-bucket imgorig--output-template-file packaged.yaml
   post_build:
     commands:
       - echo "Deploying Lambda functions to AWS..."
-      - aws cloudformation deploy --template-file packaged.yaml --stack-name t1--capabilities CAPABILITY_IAM
-
-artifacts:
-  files:
-    - packaged.yaml
-
+      - echo "$(pwd)/lambdas/LF1.zip"
+      - aws lambda create-function --function-name func1 --zip-file fileb://lambdas/LF1.zip --handler lambda_function.lambda_handler --runtime python3.9 --role arn:aws:iam::540180955589:role/test-lambda-fn-1
+      - aws lambda create-function --function-name func2 --zip-file fileb://lambdas/LF2.zip --handler search-photos.lambda_handler --runtime python3.9 --role arn:aws:iam::540180955589:role/lambdafunction2
